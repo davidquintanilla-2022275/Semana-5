@@ -1,0 +1,414 @@
+<div class="contenedor">
+
+  <div class="tarjeta">
+
+    <h1>Registro de Productos</h1>
+
+    <p class="subtitulo">
+      Ingresa los datos del producto
+    </p>
+
+    <form
+      [formGroup]="productoForm"
+      (ngSubmit)="agregarProducto()">
+
+      <!-- NOMBRE -->
+      <div class="campo">
+        <label for="nombre">
+          Nombre del producto
+        </label>
+
+        <input
+          id="nombre"
+          type="text"
+          formControlName="nombre"
+          placeholder="Ej. Laptop Lenovo">
+
+        @if (
+          productoForm.get('nombre')?.touched &&
+          productoForm.get('nombre')?.hasError('required')
+        ) {
+          <span class="error">
+            El nombre es obligatorio.
+          </span>
+        }
+
+        @if (
+          productoForm.get('nombre')?.touched &&
+          productoForm.get('nombre')?.hasError('minlength')
+        ) {
+          <span class="error">
+            El nombre debe tener al menos 3 caracteres.
+          </span>
+        }
+      </div>
+
+
+      <!-- DESCRIPCIÓN -->
+      <div class="campo">
+        <label for="descripcion">
+          Descripción
+        </label>
+
+        <textarea
+          id="descripcion"
+          formControlName="descripcion"
+          placeholder="Describe el producto">
+        </textarea>
+
+        @if (
+          productoForm.get('descripcion')?.touched &&
+          productoForm.get('descripcion')?.hasError('required')
+        ) {
+          <span class="error">
+            La descripción es obligatoria.
+          </span>
+        }
+
+        @if (
+          productoForm.get('descripcion')?.touched &&
+          productoForm.get('descripcion')?.hasError('minlength')
+        ) {
+          <span class="error">
+            La descripción debe tener al menos 5 caracteres.
+          </span>
+        }
+      </div>
+
+
+      <!-- PRECIO -->
+      <div class="campo">
+        <label for="precio">
+          Precio
+        </label>
+
+        <input
+          id="precio"
+          type="number"
+          formControlName="precio"
+          placeholder="Ej. 1500">
+
+        @if (
+          productoForm.get('precio')?.touched &&
+          productoForm.get('precio')?.hasError('required')
+        ) {
+          <span class="error">
+            El precio es obligatorio.
+          </span>
+        }
+
+        @if (
+          productoForm.get('precio')?.touched &&
+          productoForm.get('precio')?.hasError('min')
+        ) {
+          <span class="error">
+            El precio debe ser mayor que 0.
+          </span>
+        }
+      </div>
+
+
+      <!-- CATEGORÍA -->
+      <div class="campo">
+        <label for="categoria">
+          Categoría
+        </label>
+
+        <input
+          id="categoria"
+          type="text"
+          formControlName="categoria"
+          placeholder="Ej. Electrónica">
+
+        @if (
+          productoForm.get('categoria')?.touched &&
+          productoForm.get('categoria')?.hasError('required')
+        ) {
+          <span class="error">
+            La categoría es obligatoria.
+          </span>
+        }
+      </div>
+
+
+      <!-- STOCK -->
+      <div class="campo">
+        <label for="stock">
+          Stock
+        </label>
+
+        <input
+          id="stock"
+          type="number"
+          formControlName="stock"
+          placeholder="Ej. 10">
+
+        @if (
+          productoForm.get('stock')?.touched &&
+          productoForm.get('stock')?.hasError('required')
+        ) {
+          <span class="error">
+            El stock es obligatorio.
+          </span>
+        }
+
+        @if (
+          productoForm.get('stock')?.touched &&
+          productoForm.get('stock')?.hasError('min')
+        ) {
+          <span class="error">
+            El stock no puede ser negativo.
+          </span>
+        }
+      </div>
+
+
+      <!-- MENSAJE DE ÉXITO -->
+      @if (mensaje) {
+        <div class="mensaje-exito">
+          {{ mensaje }}
+        </div>
+      }
+
+
+      <!-- MENSAJE DE ERROR -->
+      @if (error) {
+        <div class="mensaje-error">
+          {{ error }}
+        </div>
+      }
+
+
+      <!-- BOTÓN -->
+      <button
+        type="submit"
+        [disabled]="productoForm.invalid">
+
+        Registrar Producto
+
+      </button>
+
+    </form>
+
+  </div>
+
+<!-- ========================= -->
+<!-- CARRITO DE COMPRAS -->
+<!-- ========================= -->
+
+<div class="carrito">
+
+  <div class="carrito-header">
+
+    <h2>🛒 Carrito de compras</h2>
+
+    <span class="cantidad-carrito">
+      {{ carrito.length }} productos
+    </span>
+
+  </div>
+
+
+  <!-- CARRITO VACÍO -->
+
+  @if (carrito.length === 0) {
+
+    <div class="carrito-vacio">
+
+      <div class="icono-carrito">
+        🛒
+      </div>
+
+      <p>
+        El carrito está vacío
+      </p>
+
+      <span>
+        Agrega productos para comenzar tu compra.
+      </span>
+
+    </div>
+
+  }
+
+
+  <!-- PRODUCTOS DEL CARRITO -->
+
+  @if (carrito.length > 0) {
+
+    <div class="lista-carrito">
+
+      @for (item of carrito; track $index) {
+
+        <div class="producto-carrito">
+
+
+          <!-- INFORMACIÓN DEL PRODUCTO -->
+
+          <div class="producto-info">
+
+            <h3>
+              {{ item.producto.nombre }}
+            </h3>
+
+            <p>
+              {{ item.producto.descripcion }}
+            </p>
+
+            <span class="categoria">
+              {{ item.producto.categoria }}
+            </span>
+
+          </div>
+
+
+          <!-- PRECIO -->
+
+          <div class="producto-precio">
+
+            <span>
+              Precio
+            </span>
+
+            <strong>
+              Q {{ item.producto.precio | number:'1.2-2' }}
+            </strong>
+
+          </div>
+
+
+          <!-- CANTIDAD -->
+
+          <div class="cantidad">
+
+            <button
+              type="button"
+              (click)="disminuirCantidad(item)">
+              −
+            </button>
+
+            <span>
+              {{ item.cantidad }}
+            </span>
+
+            <button
+              type="button"
+              (click)="aumentarCantidad(item)">
+              +
+            </button>
+
+          </div>
+
+
+          <!-- SUBTOTAL -->
+
+          <div class="subtotal">
+
+            <span>
+              Subtotal
+            </span>
+
+            <strong>
+              Q {{ item.producto.precio * item.cantidad | number:'1.2-2' }}
+            </strong>
+
+          </div>
+
+
+          <!-- ELIMINAR -->
+
+          <button
+            type="button"
+            class="btn-eliminar"
+            (click)="eliminarDelCarrito(item)">
+
+            🗑️
+
+          </button>
+
+        </div>
+
+      }
+
+    </div>
+
+
+    <!-- ========================= -->
+    <!-- RESUMEN DEL CARRITO -->
+    <!-- ========================= -->
+
+    <div class="resumen-carrito">
+
+
+      <div class="fila-resumen">
+
+        <span>
+          Productos:
+        </span>
+
+        <strong>
+          {{ carrito.length }}
+        </strong>
+
+      </div>
+
+
+      <div class="fila-resumen">
+
+        <span>
+          Cantidad total:
+        </span>
+
+        <strong>
+          {{ cantidadTotal }}
+        </strong>
+
+      </div>
+
+
+      <!-- TOTAL CON PIPE -->
+
+      <div class="fila-total">
+
+        <span>
+          Total:
+        </span>
+
+        <strong>
+          Q {{ carrito | totalCarrito | number:'1.2-2' }}
+        </strong>
+
+      </div>
+
+
+      <!-- BOTONES -->
+
+      <div class="acciones-carrito">
+
+        <button
+          type="button"
+          class="btn-vaciar"
+          (click)="vaciarCarrito()">
+
+          Vaciar carrito
+
+        </button>
+
+
+        <button
+          type="button"
+          class="btn-comprar"
+          [disabled]="carrito.length === 0"
+          (click)="realizarCompra()">
+
+          Comprar ahora
+
+        </button>
+
+      </div>
+
+    </div>
+
+  }
+
+</div>
